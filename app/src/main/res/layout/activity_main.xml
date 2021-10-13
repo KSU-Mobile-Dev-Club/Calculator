@@ -111,6 +111,15 @@
         android:text="0" />
 
     <Button
+        android:id="@+id/button_decimal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_3"
+        app:layout_constraintLeft_toRightOf="@+id/button_zero"
+        android:onClick="buttonPress"
+        android:text="." />
+
+    <Button
         android:id="@+id/button_plus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

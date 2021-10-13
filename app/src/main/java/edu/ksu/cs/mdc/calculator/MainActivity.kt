@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,24 +16,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //create buttons
-        val btn1 = findViewById<Button>(R.id.button_1)
-        val btn2 = findViewById<Button>(R.id.button_2)
-        val btn3 = findViewById<Button>(R.id.button_3)
-        val btn4 = findViewById<Button>(R.id.button_4)
-        val btn5 = findViewById<Button>(R.id.button_5)
-        val btn6 = findViewById<Button>(R.id.button_6)
-        val btn7 = findViewById<Button>(R.id.button_7)
-        val btn8 = findViewById<Button>(R.id.button_8)
-        val btn9 = findViewById<Button>(R.id.button_9)
-        val btnzero = findViewById<Button>(R.id.button_zero)
-        val btnplus = findViewById<Button>(R.id.button_plus)
-        val btnminus = findViewById<Button>(R.id.button_minus)
-        val btnmultiply = findViewById<Button>(R.id.button_multiply)
-        val btndivide = findViewById<Button>(R.id.button_divide)
     }
 
+    /**
+     * Called by buttons for numbers and operators.
+     *
+     * Fills the equation variable and displays it.
+     */
     fun buttonPress(view: android.view.View) {
         val btn : Button? = view as? Button
         val btntext : String? = btn?.text.toString()
@@ -41,39 +31,57 @@ class MainActivity : AppCompatActivity() {
         display.setText(this.equation)
     }
 
+    /**
+     * Called by hitting the = button.
+     *
+     * Displays the result of the equation.
+     */
     fun equalsButtonPress(view: android.view.View) {
-        //val pieces = this.equation.split("")
         val pieces = convertToMath(this.equation)
         val display : TextView = findViewById(R.id.calculator_textview)
         display.setText(calculate(pieces))
     }
 
-    private fun calculate(equationparts : List<String>) : String {
-        var answer : Float = equationparts[0].toFloat()
+    /**
+     * Called by the equalsButtonPress method to find the result of the equation.
+     *
+     * @param equationParts A List of Strings consisting of numbers and operators.
+     */
+    private fun calculate(equationParts : List<String>) : String {
+        var answer : Double = equationParts[0].toDouble()
         var x : Int = 1
-        var temp : String = equationparts[2]
-        val size : Int = equationparts.size
+        var temp : String = equationParts[2]
+        val size : Int = equationParts.size
         while (x < size) {
             when (temp) {
                 "+" -> {
-                    answer += equationparts[x].toFloat()
+                    answer += equationParts[x].toDouble()
+                    temp = equationParts[x]
                 }
                 "-" -> {
-                    answer -= equationparts[x].toFloat()
+                    answer -= equationParts[x].toDouble()
+                    temp = equationParts[x]
                 }
                 "*" -> {
-                    answer *= equationparts[x].toFloat()
+                    answer *= equationParts[x].toDouble()
+                    temp = equationParts[x]
                 }
                 "/" -> {
-                    answer /= equationparts[x].toFloat()
+                    answer /= equationParts[x].toDouble()
+                    temp = equationParts[x]
                 }
-                else -> equationparts[x].also { temp = it }
+                else -> equationParts[x].also { temp = it }
             }
             x++
         }
         return answer.toString()
     }
 
+    /**
+     * Called by pressing the C button.
+     *
+     * Resets the state of the calculator to starting conditions.
+     */
     fun clearButtonPress(view: android.view.View) {
         this.equation = ""
         this.result = ""
@@ -81,13 +89,22 @@ class MainActivity : AppCompatActivity() {
         display.setText(this.equation)
     }
 
+    /**
+     * Called by pressing the Backspace button
+     *
+     * Removes the last character from the equation.
+     */
     fun backspaceButtonPress(view: android.view.View) {
         this.equation = this.equation.dropLast(1)
         val display : TextView = findViewById(R.id.calculator_textview)
         display.setText(this.equation)
     }
 
-    fun convertToMath(equation: String): List<String> {
+    /**
+     * Converts the single String equation into a List<String> of
+     * separated numbers and operators.
+     */
+    private fun convertToMath(equation: String): List<String> {
         var converted : List<String> = mutableListOf()
         var x = 0
         var piece : String = ""
@@ -96,6 +113,11 @@ class MainActivity : AppCompatActivity() {
                 piece += equation.elementAt(x)
                 if (x == equation.length - 1) {
                     converted += piece
+                }
+            } else if (equation.elementAt(x) == '.') {
+                piece += equation.elementAt(x)
+                if (x == equation.length - 1) {
+                    converted += piece + "0"
                 }
             } else {
                 converted += piece
